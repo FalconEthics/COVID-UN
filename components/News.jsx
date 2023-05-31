@@ -1,78 +1,58 @@
-import { Text, View, FlatList, Image } from "react-native";
-import { useRouter } from "expo-router";
-import TestImg1 from "../assets/TestImg1.jpg";
-import TestImg2 from "../assets/TestImg2.jpg";
-import TestImg3 from "../assets/TestImg3.jpg";
-import TestImg4 from "../assets/TestImg4.jpg";
-import TestImg5 from "../assets/TestImg5.jpg";
-
+import { Text, View, FlatList, Image, ActivityIndicator, TouchableOpacity, Linking } from "react-native";
+import { useContext, useState } from "react";
+import MyContext from "../store/MyContext";
 
 const News = () => {
-    const router = useRouter();
+    const [, , news, , loading, clickedArticle, setClickedArticle] = useContext(MyContext);
+    const [expanding, setExpanding] = useState(false);
 
-    const DATA = [
-        {
-            id: '1',
-            title: 'Coronavirus: India records 16,738 cases, 138 deaths in a day; tally over 1.10 crore',
-            img: TestImg1,
-            author: '~ Mr. HT devinc',
-            body: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Illo dolores sit officiis fugit temporibus rerum, eius, vitae cumque voluptatem facilis sunt. Quaerat incidunt quas dignissimos expedita recusandae ex neque itaque!'
-        },
-        {
-            id: '2',
-            title: 'Covid-19: India records 16,738 cases, 138 deaths in a day; tally over 1.10 crore',
-            img: TestImg2,
-            author: '~ Times of India',
-            body: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Illo dolores sit officiis fugit temporibus rerum, eius, vitae cumque voluptatem facilis sunt. Quaerat incidunt quas dignissimos expedita recusandae ex neque itaque!'
-        },
-        {
-            id: '3',
-            title: 'Vaccine hesitancy: 40% of health workers in UP\'s Hardoi refuse to take Covid-19 vaccine',
-            img: TestImg3,
-            author: '~ NDTV News',
-            body: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Illo dolores sit officiis fugit temporibus rerum, eius, vitae cumque voluptatem facilis sunt. Quaerat incidunt quas dignissimos expedita recusandae ex neque itaque!'
-        },
-        {
-            id: '4',
-            title: 'Cowin 2.0: How to register for Covid-19 vaccine online, get an appointment',
-            img: TestImg4,
-            author: '~ India Today',
-            body: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Illo dolores sit officiis fugit temporibus rerum, eius, vitae cumque voluptatem facilis sunt. Quaerat incidunt quas dignissimos expedita recusandae ex neque itaque!'
-        },
-        {
-            id: '5',
-            title: "PM Modi takes first dose of Covid-19 vaccine at Delhi's AIIMS",
-            img: TestImg5,
-            author: '~ The Hindu',
-            body: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Illo dolores sit officiis fugit temporibus rerum, eius, vitae cumque voluptatem facilis sunt. Quaerat incidunt quas dignissimos expedita recusandae ex neque itaque!'
-        },
+    const handleOpenLink = (link) => {
+        Linking.openURL(link);
+    };
 
-    ];
+    const handleExpand = () => {
+        setExpanding(true);
+        setTimeout(() => {
+            setExpanding(false);
+        }, 1000);
+    };
 
-    const Item = ({ title, img, author, body }) => (
-        <View className="bg-white p-2 mt-4 flex flex-row rounded-xl shadow space-x-2" >
-            <View>
-                <Image source={img} style={{ width: 80, height: 80 }} className="rounded-lg"/>
-            </View>
-            <View className="w-9/12 flex flex-col">
-                <Text onPress={() => {
-                    router.push("/newsDetails")
-                }} className="break-words">{title}</Text>
-                <Text className="text-xs text-gray-400 ml-auto pr-3">{author}</Text>
-            </View>
-        </View>
+    const Item = ({ title, img, author, id, body, link }) => (
+        clickedArticle == id && expanding == true 
+        ? 
+        <ActivityIndicator size="large" className="mt-5" /> 
+        :
+            <TouchableOpacity className={`bg-white p-2 mt-4 flex ${clickedArticle == id ? "flex-col" : "flex-row"} rounded-xl shadow`}
+                onPress={() => {
+                    handleExpand();
+                    clickedArticle == id ? setClickedArticle(null) : setClickedArticle(id);
+                }}>
+                <View>
+                    <Image source={{ uri: img }} style={clickedArticle != id && { width: 80, height: 80 }} className={`rounded-lg h-full mr-1 ${clickedArticle == id && 'w-full h-[200]'}`} />
+                </View>
+                <View className={`flex flex-col p-1 ${clickedArticle != id ? 'w-9/12' : 'w-full space-y-2'}`}>
+                    <Text className="break-words font-bold">{title}</Text>
+                    <Text className={`text-xs text-gray-400 ${clickedArticle != id && 'mr-2 ml-auto'}`}>~ {author}</Text>
+                    {clickedArticle == id && <Text className='break-word'>{body}</Text>}
+                </View>
+                {clickedArticle == id && <TouchableOpacity onPress={() => handleOpenLink(link)} className="w-full">
+                    <Text className="text-center text-white bg-blue-500 p-2 rounded-xl mt-1">Open Article ↗</Text>
+                </TouchableOpacity>}
+            </TouchableOpacity>
     );
 
     return (
         <View className="p-7 pt-0 flex-1 overflow-hidden">
             <Text className="text-lg font-extrabold border-b">INDIA COVID NEWS 🗞️</Text>
-            <FlatList
+            {loading ? <ActivityIndicator size="large" className="mt-5" /> : <FlatList
                 className="mb-20"
-                data={DATA}
-                renderItem={({ item }) => <Item title={item.title} img={item.img} author={item.author} body={item.body} />}
-                keyExtractor={item => item.id}
-            />
-        </View>
+                data={news}
+                renderItem={item =>
+                    <Item title={item.item.title} img={item.item.media} author={item.item.rights} id={item.item._id} link={item.item.link} body={item.item.summary} />
+                }
+                keyExtractor={item => item._id}
+            />}
+        </View >
     );
 }
 

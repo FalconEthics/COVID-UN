@@ -1,20 +1,63 @@
-import { Modal, FlatList, View, Text, Image, TextInput, TouchableOpacity } from "react-native"
+import { Modal, FlatList, View, Text, Image, TextInput, TouchableOpacity, Keyboard } from "react-native"
 import { useState } from "react"
-import logo from "../assets/logo.png"
+import logo from "../assets/logo.png";
+import { useContext } from "react";
+import MyContext from "../store/MyContext";
 
 const Search = () => {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedValue, setSelectedValue] = useState('IN');
+    const [text, onChangeText] = useState('');
+    const [, setCountry, , setQuery] = useContext(MyContext);
 
     const options = [
         { label: 'India', value: 'IN' },
         { label: 'United States of America', value: 'US' },
-        { label: 'United Kingdom', value: 'UK' },
+        { label: 'Canada', value: 'CA' },
+        { label: 'United Kingdom', value: 'GB' },
+        { label: 'Australia', value: 'AU' },
+        { label: 'China', value: 'CN' },
+        { label: 'Japan', value: 'JP' },
+        { label: 'France', value: 'FR' },
+        { label: 'Germany', value: 'DE' },
+        { label: 'Italy', value: 'IT' },
+        { label: 'Spain', value: 'ES' },
+        { label: 'Russia', value: 'RU' },
+        { label: 'Brazil', value: 'BR' },
+        { label: 'Mexico', value: 'MX' },
+        { label: 'Argentina', value: 'AR' },
+        { label: 'South Africa', value: 'ZA' },
+        { label: 'Nigeria', value: 'NG' },
+        { label: 'Egypt', value: 'EG' },
+        { label: 'Kenya', value: 'KE' },
+        { label: 'Pakistan', value: 'PK' },
+        { label: 'Bangladesh', value: 'BD' },
+        { label: 'Sri Lanka', value: 'LK' },
+        { label: 'Afghanistan', value: 'AF' },
+        { label: 'Nepal', value: 'NP' },
+        { label: 'Bhutan', value: 'BT' },
+        { label: 'Maldives', value: 'MV' },
+        { label: 'Myanmar', value: 'MM' },
+        { label: 'Thailand', value: 'TH' },
+        { label: 'Malaysia', value: 'MY' },
+        { label: 'Singapore', value: 'SG' },
+        { label: 'Indonesia', value: 'ID' },
+        { label: 'Philippines', value: 'PH' },
+        { label: 'Vietnam', value: 'VN' },
+        { label: 'Cambodia', value: 'KH' },
+        { label: 'Laos', value: 'LA' },
+        { label: 'Mongolia', value: 'MN' },
+        { label: 'North Korea', value: 'KP' },
+        { label: 'South Korea', value: 'KR' },
+        { label: 'Taiwan', value: 'TW' },
+        { label: 'Hong Kong', value: 'HK' },
+        { label: 'Macau', value: 'MO' },
     ];
 
     const handleOptionPress = (value) => {
         setSelectedValue(value);
+        setCountry(value);
         setModalVisible(false);
     };
 
@@ -28,7 +71,7 @@ const Search = () => {
                 <Text className="p-1 text-lg">COVID-19 NEWS & </Text>
                 <Text className="p-1 text-lg text-[#6297FF]">STATS</Text>
             </View>
-            <TextInput placeholder="Search for keywords" className="bg-white p-3 rounded-xl shadow mb-3" />
+            <TextInput placeholder="Search for keywords" className="bg-white p-3 rounded-xl shadow mb-3" onChangeText={onChangeText} value={text} />
             <View className="flex flex-row space-x-2">
                 <TouchableOpacity onPress={() => setModalVisible(true)} className="p-3 w-6/12 bg-white rounded-lg shadow">
                     <View className="flex flex-row justify-between">
@@ -36,7 +79,13 @@ const Search = () => {
                         <Text>˅</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity className="p-3 bg-[#6297FF] w-[47%] rounded-lg shadow">
+                <TouchableOpacity className="p-3 bg-[#6297FF] w-[47%] rounded-lg shadow" onPress={() => {
+                    if (text != '') {
+                        setQuery(text.toLowerCase().replace(/\s/g, ""));
+                        onChangeText('');
+                        Keyboard.dismiss();
+                    }
+                }}>
                     <View className="flex flex-row justify-between">
                         <Text>Search</Text>
                         <Text>🔍</Text>
