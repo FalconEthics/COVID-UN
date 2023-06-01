@@ -1,4 +1,4 @@
-import { ImageBackground, Text, View, ScrollView } from "react-native";
+import { ImageBackground, ScrollView } from "react-native";
 import bg from "../assets/bg.jpg";
 import Search from "../components/Search";
 import { StatusBar } from "expo-status-bar";
@@ -9,15 +9,22 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function Page() {
+  //to store the stats data
   const [data, setData] = useState({});
+  // to store the country code
   const [country, setCountry] = useState('IN');
+  // to store the news data
   const [news, setNews] = useState([{}]);
+  // to store the search query
   const [query, setQuery] = useState('covid');
+  // to store the loading state of the news
   const [loading, setLoading] = useState(false);
+  // to store the clicked article id
   const [clickedArticle, setClickedArticle] = useState(null);
 
   useEffect(() => {
     async function fetchStats() {
+      // to fetch the stats data
       const options = {
         method: 'GET',
         url: `https://coronavirus-smartable.p.rapidapi.com/stats/v1/${country}/`,
@@ -27,6 +34,7 @@ export default function Page() {
         }
       };
       try {
+        // to set the loading state to true
         const response = await axios.request(options);
         setData(response.data.stats);
       }
@@ -35,12 +43,15 @@ export default function Page() {
       }
     }
     async function fetchNews() {
+      // to fetch the news data
       const options = {
         method: 'GET',
         url: 'https://covid-19-news.p.rapidapi.com/v1/covid',
         params: {
+          // to set the query to the country name
           q: query,
           lang: 'en',
+          // to set the country code from the state
           country: country,
           media: 'True'
         },
@@ -50,11 +61,13 @@ export default function Page() {
         }
       };
       try {
+        // to set the loading state to true
         setLoading(true);
         const response = await axios.request(options);
         setNews(response.data.articles);
         setLoading(false);
       } catch (error) {
+        // to set the loading state to false and show the error message
         console.error(error);
         setLoading(false);
         setNews([{
@@ -67,6 +80,7 @@ export default function Page() {
     }
     fetchStats();
     fetchNews();
+    // to fetch the data every time the country code and query changes
   }, [country, query])
 
   return (

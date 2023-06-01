@@ -5,13 +5,17 @@ import { useContext } from "react";
 import MyContext from "../store/MyContext";
 
 const Search = () => {
-
+    // to store the modal visibility state of the country picker
     const [modalVisible, setModalVisible] = useState(false);
+    // to store the selected country value
     const [selectedValue, setSelectedValue] = useState('IN');
+    // to store the search query
     const [text, onChangeText] = useState('');
+    // getting the country and query setter from the context
     const [, setCountry, , setQuery] = useContext(MyContext);
 
     const options = [
+        // to store the country options
         { label: 'India', value: 'IN' },
         { label: 'United States of America', value: 'US' },
         { label: 'Canada', value: 'CA' },
@@ -56,6 +60,7 @@ const Search = () => {
     ];
 
     const handleOptionPress = (value) => {
+        // to set the selected country value
         setSelectedValue(value);
         setCountry(value);
         setModalVisible(false);
@@ -81,6 +86,8 @@ const Search = () => {
                 </TouchableOpacity>
                 <TouchableOpacity className="p-3 bg-[#6297FF] w-[47%] rounded-lg shadow" onPress={() => {
                     if (text != '') {
+                        // to set the search query on search button press only if the query is not empty
+                        // to remove all the spaces and convert the query to lowercase and then dismiss the keyboard
                         setQuery(text.toLowerCase().replace(/\s/g, ""));
                         onChangeText('');
                         Keyboard.dismiss();

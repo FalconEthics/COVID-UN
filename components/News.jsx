@@ -1,30 +1,40 @@
 import { Text, View, FlatList, Image, ActivityIndicator, TouchableOpacity, Linking } from "react-native";
-import { useContext, useState } from "react";
+import { useContext, useState, useMemo } from "react";
 import MyContext from "../store/MyContext";
 
 const News = () => {
+    // getting the news data from the context
     const [, , news, , loading, clickedArticle, setClickedArticle] = useContext(MyContext);
+    // to store the expanding state of the article
     const [expanding, setExpanding] = useState(false);
 
+    const Item = useMemo(() => {
+    
     const handleOpenLink = (link) => {
+        // to open the article in the browser
         Linking.openURL(link);
     };
 
     const handleExpand = () => {
+        // to set the expanding state to true
         setExpanding(true);
         setTimeout(() => {
+            // to set the expanding state to false after 1 second
             setExpanding(false);
         }, 1000);
     };
 
-    const Item = ({ title, img, author, id, body, link }) => (
+    return ({ title, img, author, id, body, link }) => (
+        // to render the news item component only if the article is not expanding
         clickedArticle == id && expanding == true 
         ? 
         <ActivityIndicator size="large" className="mt-5" /> 
         :
+        // to render the news item component conditionally depending on the expanding state and if the item is clicked
             <TouchableOpacity className={`bg-white p-2 mt-4 flex ${clickedArticle == id ? "flex-col" : "flex-row"} rounded-xl shadow`}
                 onPress={() => {
                     handleExpand();
+                    // to set the clicked article id to null if the article is already clicked
                     clickedArticle == id ? setClickedArticle(null) : setClickedArticle(id);
                 }}>
                 <View>
@@ -40,10 +50,12 @@ const News = () => {
                 </TouchableOpacity>}
             </TouchableOpacity>
     );
+    }, [clickedArticle, expanding]);
 
     return (
         <View className="p-7 pt-0 flex-1 overflow-hidden">
             <Text className="text-lg font-extrabold border-b">INDIA COVID NEWS 🗞️</Text>
+            {/* to display the loading indicator if the news is loading */}
             {loading ? <ActivityIndicator size="large" className="mt-5" /> : <FlatList
                 className="mb-20"
                 data={news}

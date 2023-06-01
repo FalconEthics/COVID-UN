@@ -3,7 +3,7 @@ import { useContext } from "react";
 import MyContext from "../store/MyContext"; 
 
 const Status = () => {
-
+    // getting the stats data from the context
     const [data] = useContext(MyContext);
 
     return (
