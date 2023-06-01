@@ -19,14 +19,23 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.soumikdas.COVIDUN"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.soumikdas.COVIDUN"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6fe19764-4344-482c-83fd-9e9f82ebbacc"
       }
     }
   }
